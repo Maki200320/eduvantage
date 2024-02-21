@@ -3,7 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:tech_media/utils/utils.dart';
 import 'package:tech_media/view_model/services/session_manager.dart';
 import 'package:tech_media/res/color.dart';
-
+//snadbv
 class MessageScreen extends StatefulWidget {
   final String image, name, email, receiverId;
   const MessageScreen({
