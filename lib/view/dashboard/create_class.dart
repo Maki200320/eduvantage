@@ -6,7 +6,8 @@ import 'package:tech_media/res/fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import '../../Firebase_notif_API/Notif_service.dart';
+
+import '../../notifuckation/Notif_service.dart';
 
 class CreateNewClassScreen extends StatefulWidget {
   @override
@@ -22,6 +23,7 @@ class _CreateNewClassScreenState extends State<CreateNewClassScreen> {
 
   String subjectName = '';
   String subjectCode = '';
+  DateTime classDate = DateTime.now();
   DateTime startTime = DateTime.now();
   DateTime endTime = DateTime.now();
   String room = '';
@@ -48,6 +50,21 @@ class _CreateNewClassScreenState extends State<CreateNewClassScreen> {
 
   void changeColor(Color color) {
     setState(() => selectedColor = color);
+  }
+
+  Future<void> _selectClassDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: classDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101), // You can set an arbitrary end date here
+    );
+
+    if (pickedDate != null && pickedDate != classDate) {
+      setState(() {
+        classDate = pickedDate;
+      });
+    }
   }
 
   Future<void> _selectStartTime(BuildContext context) async {
@@ -141,6 +158,21 @@ class _CreateNewClassScreenState extends State<CreateNewClassScreen> {
                 ),
                 Row(
                   children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          _selectClassDate(context);
+                        },
+                        child: InputDecorator(
+                          decoration: InputDecoration(labelText: 'Date'),
+                          child: Text(
+                            DateFormat('yyyy-MM-dd').format(classDate),
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 16),
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
@@ -280,6 +312,7 @@ class _CreateNewClassScreenState extends State<CreateNewClassScreen> {
         .add({
       'subjectName': subjectName,
       'subjectCode': subjectCode,
+      'classDate': Timestamp.fromDate(classDate),
       'startTime': Timestamp.fromDate(startTime),
       'endTime': Timestamp.fromDate(endTime),
       'room': room,
@@ -288,9 +321,8 @@ class _CreateNewClassScreenState extends State<CreateNewClassScreen> {
       'userUID': userUID,
     })
         .then((documentReference) {
-      print('Class added to Firestore');
+      print('Class added to Firestoooooooooooooooooooore');
 
-      scheduleNotification(documentReference.id, startTime);
 
       Navigator.pop(context);
     })
@@ -299,16 +331,5 @@ class _CreateNewClassScreenState extends State<CreateNewClassScreen> {
     });
   }
 
-  void scheduleNotification(String classId, DateTime classStartTime) async {
-    print('Scheduling notification for class $classId');
-    final timeDifference = classStartTime.difference(DateTime.now());
 
-    await notificationService.scheduleNotification(
-      id: classId.hashCode,
-      title: 'Class Reminder',
-      body: 'Your class ($subjectName) is about to start!',
-      scheduledNotificationDateTime: DateTime.now().add(timeDifference),
-    );
-    print('Notification scheduled successfully');
-  }
 }
