@@ -5,9 +5,11 @@ import 'package:tech_media/utils/routes/route_name.dart';
 import 'package:tech_media/utils/routes/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:timezone/data/latest.dart' as tz;
-import 'package:tech_media/Firebase_notif_API/Notif_service.dart';
+
 import 'package:tech_media/view/login/login_screen.dart';
 import 'package:tech_media/view/splash/splash_screen.dart';
+
+import 'notifuckation/Notif_service.dart';
 
 
 void main() async {

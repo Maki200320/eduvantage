@@ -1,0 +1,34 @@
+warning: in the working copy of 'android/app/src/main/AndroidManifest.xml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/main.dart', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/android/app/src/main/AndroidManifest.xml b/android/app/src/main/AndroidManifest.xml[m
+[1mindex bc0e9ba..d1ce9e2 100644[m
+[1m--- a/android/app/src/main/AndroidManifest.xml[m
+[1m+++ b/android/app/src/main/AndroidManifest.xml[m
+[36m@@ -20,7 +20,8 @@[m
+     <application[m
+         android:label="EduVantage"[m
+         android:name="${applicationName}"[m
+[31m-        android:icon="@mipmap/launcher_icon">[m
+[32m+[m[32m        android:icon="@mipmap/launcher_icon"[m
+[32m+[m[32m        android:enableOnBackInvokedCallback="true">[m
+         <activity[m
+             android:name=".MainActivity"[m
+             android:exported="true"[m
+[1mdiff --git a/lib/main.dart b/lib/main.dart[m
+[1mindex 489a0e3..f94c72e 100644[m
+[1m--- a/lib/main.dart[m
+[1m+++ b/lib/main.dart[m
+[36m@@ -5,10 +5,12 @@[m [mimport 'package:tech_media/utils/routes/route_name.dart';[m
+ import 'package:tech_media/utils/routes/routes.dart';[m
+ import 'package:firebase_core/firebase_core.dart';[m
+ import 'package:timezone/data/latest.dart' as tz;[m
+[31m-import 'package:tech_media/Firebase_notif_API/Notif_service.dart';[m
+[32m+[m
+ import 'package:tech_media/view/login/login_screen.dart';[m
+ import 'package:tech_media/view/splash/splash_screen.dart';[m
+ [m
+[32m+[m[32mimport 'notifuckation/Notif_service.dart';[m
+[32m+[m
+ [m
+ void main() async {[m
+ [m

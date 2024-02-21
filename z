@@ -1,0 +1,168 @@
+warning: in the working copy of 'android/app/src/main/AndroidManifest.xml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/main.dart', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/android/app/src/main/AndroidManifest.xml b/android/app/src/main/AndroidManifest.xml[m
+[1mindex bc0e9ba..d1ce9e2 100644[m
+[1m--- a/android/app/src/main/AndroidManifest.xml[m
+[1m+++ b/android/app/src/main/AndroidManifest.xml[m
+[36m@@ -20,7 +20,8 @@[m
+     <application[m
+         android:label="EduVantage"[m
+         android:name="${applicationName}"[m
+[31m-        android:icon="@mipmap/launcher_icon">[m
+[32m+[m[32m        android:icon="@mipmap/launcher_icon"[m
+[32m+[m[32m        android:enableOnBackInvokedCallback="true">[m
+         <activity[m
+             android:name=".MainActivity"[m
+             android:exported="true"[m
+[1mdiff --git a/lib/main.dart b/lib/main.dart[m
+[1mindex 489a0e3..f94c72e 100644[m
+[1m--- a/lib/main.dart[m
+[1m+++ b/lib/main.dart[m
+[36m@@ -5,10 +5,12 @@[m [mimport 'package:tech_media/utils/routes/route_name.dart';[m
+ import 'package:tech_media/utils/routes/routes.dart';[m
+ import 'package:firebase_core/firebase_core.dart';[m
+ import 'package:timezone/data/latest.dart' as tz;[m
+[31m-import 'package:tech_media/Firebase_notif_API/Notif_service.dart';[m
+[32m+[m
+ import 'package:tech_media/view/login/login_screen.dart';[m
+ import 'package:tech_media/view/splash/splash_screen.dart';[m
+ [m
+[32m+[m[32mimport 'notifuckation/Notif_service.dart';[m
+[32m+[m
+ [m
+ void main() async {[m
+ [m
+[1mdiff --git a/lib/view/dashboard/create_class.dart b/lib/view/dashboard/create_class.dart[m
+[1mindex 22263bb..c37e97e 100644[m
+[1m--- a/lib/view/dashboard/create_class.dart[m
+[1m+++ b/lib/view/dashboard/create_class.dart[m
+[36m@@ -6,7 +6,8 @@[m [mimport 'package:tech_media/res/fonts.dart';[m
+ import 'package:firebase_auth/firebase_auth.dart';[m
+ import 'package:flutter_local_notifications/flutter_local_notifications.dart';[m
+ [m
+[31m-import '../../Firebase_notif_API/Notif_service.dart';[m
+[32m+[m
+[32m+[m[32mimport '../../notifuckation/Notif_service.dart';[m
+ [m
+ class CreateNewClassScreen extends StatefulWidget {[m
+   @override[m
+[36m@@ -22,6 +23,7 @@[m [mclass _CreateNewClassScreenState extends State<CreateNewClassScreen> {[m
+ [m
+   String subjectName = '';[m
+   String subjectCode = '';[m
+[32m+[m[32m  DateTime classDate = DateTime.now();[m
+   DateTime startTime = DateTime.now();[m
+   DateTime endTime = DateTime.now();[m
+   String room = '';[m
+[36m@@ -50,6 +52,21 @@[m [mclass _CreateNewClassScreenState extends State<CreateNewClassScreen> {[m
+     setState(() => selectedColor = color);[m
+   }[m
+ [m
+[32m+[m[32m  Future<void> _selectClassDate(BuildContext context) async {[m
+[32m+[m[32m    final DateTime? pickedDate = await showDatePicker([m
+[32m+[m[32m      context: context,[m
+[32m+[m[32m      initialDate: classDate,[m
+[32m+[m[32m      firstDate: DateTime.now(),[m
+[32m+[m[32m      lastDate: DateTime(2101), // You can set an arbitrary end date here[m
+[32m+[m[32m    );[m
+[32m+[m
+[32m+[m[32m    if (pickedDate != null && pickedDate != classDate) {[m
+[32m+[m[32m      setState(() {[m
+[32m+[m[32m        classDate = pickedDate;[m
+[32m+[m[32m      });[m
+[32m+[m[32m    }[m
+[32m+[m[32m  }[m
+[32m+[m
+   Future<void> _selectStartTime(BuildContext context) async {[m
+     final TimeOfDay? pickedTime = await showTimePicker([m
+       context: context,[m
+[36m@@ -141,6 +158,21 @@[m [mclass _CreateNewClassScreenState extends State<CreateNewClassScreen> {[m
+                 ),[m
+                 Row([m
+                   children: [[m
+[32m+[m[32m                    Expanded([m
+[32m+[m[32m                      child: GestureDetector([m
+[32m+[m[32m                        onTap: () {[m
+[32m+[m[32m                          _selectClassDate(context);[m
+[32m+[m[32m                        },[m
+[32m+[m[32m                        child: InputDecorator([m
+[32m+[m[32m                          decoration: InputDecoration(labelText: 'Date'),[m
+[32m+[m[32m                          child: Text([m
+[32m+[m[32m                            DateFormat('yyyy-MM-dd').format(classDate),[m
+[32m+[m[32m                            style: TextStyle(fontSize: 16),[m
+[32m+[m[32m                          ),[m
+[32m+[m[32m                        ),[m
+[32m+[m[32m                      ),[m
+[32m+[m[32m                    ),[m
+[32m+[m[32m                    SizedBox(width: 16),[m
+                     Expanded([m
+                       child: GestureDetector([m
+                         onTap: () {[m
+[36m@@ -280,6 +312,7 @@[m [mclass _CreateNewClassScreenState extends State<CreateNewClassScreen> {[m
+         .add({[m
+       'subjectName': subjectName,[m
+       'subjectCode': subjectCode,[m
+[32m+[m[32m      'classDate': Timestamp.fromDate(classDate),[m
+       'startTime': Timestamp.fromDate(startTime),[m
+       'endTime': Timestamp.fromDate(endTime),[m
+       'room': room,[m
+[36m@@ -288,9 +321,8 @@[m [mclass _CreateNewClassScreenState extends State<CreateNewClassScreen> {[m
+       'userUID': userUID,[m
+     })[m
+         .then((documentReference) {[m
+[31m-      print('Class added to Firestore');[m
+[32m+[m[32m      print('Class added to Firestoooooooooooooooooooore');[m
+ [m
+[31m-      scheduleNotification(documentReference.id, startTime);[m
+ [m
+       Navigator.pop(context);[m
+     })[m
+[36m@@ -299,16 +331,5 @@[m [mclass _CreateNewClassScreenState extends State<CreateNewClassScreen> {[m
+     });[m
+   }[m
+ [m
+[31m-  void scheduleNotification(String classId, DateTime classStartTime) async {[m
+[31m-    print('Scheduling notification for class $classId');[m
+[31m-    final timeDifference = classStartTime.difference(DateTime.now());[m
+ [m
+[31m-    await notificationService.scheduleNotification([m
+[31m-      id: classId.hashCode,[m
+[31m-      title: 'Class Reminder',[m
+[31m-      body: 'Your class ($subjectName) is about to start!',[m
+[31m-      scheduledNotificationDateTime: DateTime.now().add(timeDifference),[m
+[31m-    );[m
+[31m-    print('Notification scheduled successfully');[m
+[31m-  }[m
+[31m-}[m
+\ No newline at end of file[m
+[32m+[m[32m}[m
+[1mdiff --git a/lib/view/dashboard/home/home.dart b/lib/view/dashboard/home/home.dart[m
+[1mindex a7bd4c9..6dbf403 100644[m
+[1m--- a/lib/view/dashboard/home/home.dart[m
+[1m+++ b/lib/view/dashboard/home/home.dart[m
+[36m@@ -9,7 +9,8 @@[m [mimport 'package:tech_media/view/dashboard/edit_class.dart';[m
+ import 'package:tech_media/view/dashboard/profile/profile.dart';[m
+ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';[m
+ import 'package:tech_media/view/dashboard/tasks/tasks.dart';[m
+[31m-import '../../../Firebase_notif_API/Notif_service.dart';[m
+[32m+[m
+[32m+[m[32mimport '../../../notifuckation/Notif_service.dart';[m
+ import '../../../res/color.dart';[m
+ import 'package:flutter/material.dart';[m
+ import 'package:firebase_auth/firebase_auth.dart';[m
+[36m@@ -161,71 +162,76 @@[m [mclass _HomeScreenState extends State<HomeScreen> {[m
+                     height: 15,[m
+                   ),[m
+                   // Use a StreamBuilder to listen to your Firestore data[m
+[31m-                  Padding([m
+[31m-                    padding: const EdgeInsets.only(left: 12),[m
+[31m-                    child: StreamBuilder<QuerySnapshot>([m
+[31m-                      stream: classCollection[m
+[31m-                          .where('userUID', isEqualTo: userUID)[m
+[31m-                          .orderBy('startTime')[m
+[31m-                          .snapshots(),[m
+[31m-                      builder: (context, snapshot) {[m
+[31m-                        if (snapshot.connectionState == ConnectionState.waiting) {[m
+[31m-                          return CircularProgressIndicator(); // Loading indicator[m
+[31m-                        }[m
+[31m-                        if (snaps
