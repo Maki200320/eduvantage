@@ -355,7 +355,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (teacher.length > 20) {
       truncatedTeacher = teacher.substring(0, 11) + '...';
     }
-
+//adjust width of classSchedule container
     return Container(
       width: 250 ,
 
