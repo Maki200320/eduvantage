@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "316526919535",
+    "firebase_url": "https://capstone-2b230-default-rtdb.firebaseio.com",
+    "project_id": "capstone-2b230",
+    "storage_bucket": "capstone-2b230.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:316526919535:android:c173d8272e541f5479329a",
+        "android_client_info": {
+          "package_name": "com.chitchat.chittychatty"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4lxUS1uLz7A0W_575tMa9pyiernXQwWk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
