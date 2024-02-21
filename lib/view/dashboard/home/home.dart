@@ -9,7 +9,8 @@ import 'package:tech_media/view/dashboard/edit_class.dart';
 import 'package:tech_media/view/dashboard/profile/profile.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:tech_media/view/dashboard/tasks/tasks.dart';
-import '../../../Firebase_notif_API/Notif_service.dart';
+
+import '../../../notifuckation/Notif_service.dart';
 import '../../../res/color.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -161,71 +162,76 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: 15,
                   ),
                   // Use a StreamBuilder to listen to your Firestore data
-                  Padding(
-                    padding: const EdgeInsets.only(left: 12),
-                    child: StreamBuilder<QuerySnapshot>(
-                      stream: classCollection
-                          .where('userUID', isEqualTo: userUID)
-                          .orderBy('startTime')
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return CircularProgressIndicator(); // Loading indicator
-                        }
-                        if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
-                        }
-                        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                          return Row(
-                            children: [
-                              Expanded(
-                                child: Center(
-                                  child: Text(
-                                    'No classes available',
-                                    style: TextStyle(
-                                      color: Colors.black54,
-                                      fontSize: 18, // Adjust the font size as needed
-                                      fontWeight: FontWeight.normal, // Add any other desired style
+                  Container(
+                    height: 170,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 12),
+                      child: StreamBuilder<QuerySnapshot>(
+                        stream: classCollection
+                            .where('userUID', isEqualTo: userUID)
+                            .orderBy('startTime')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return CircularProgressIndicator(); // Loading indicator
+                          }
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          }
+                          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                            return Row(
+                              children: [
+                                Expanded(
+                                  child: Center(
+                                    child: Text(
+                                      'No classes available',
+                                      style: TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: 18, // Adjust the font size as needed
+                                        fontWeight: FontWeight.normal, // Add any other desired style
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              Container(
-                                width: 100, // Adjust the width as needed
-                                height: 50, // Adjust the height as needed
-                                child: buildAddClassButton(), // Render "Add Class" button
-                              ),
-                            ],
-                          );
-                        }
-                        // Display your class schedule items here based on the data in snapshot
-                        final classScheduleItems = snapshot.data!.docs.map((doc) {
-                          final data = doc.data() as Map<String, dynamic>;
-                          final documentId = doc.id; // Retrieve the document ID
-                          final backgroundColor = Color(int.parse(data['backgroundColor'], radix: 16)); // Parse the color from the Firestore document
-                          return buildClassScheduleItem(
-                            documentId: documentId, // Pass the document I
-                            subject: data['subjectName'],
-                            subjectCode: data['subjectCode'],
-                            startTime: data['startTime'], // Retrieve the start time
-                            endTime: data['endTime'],
-                            room: data['room'],
-                            teacher: data['teacher'],
-                            backgroundColor: backgroundColor, // Use the retrieved color
-                          );
-                        }).toList();
+                                Container(
+                                  width: 100, // Adjust the width as needed
+                                  height: 10, // Adjust the height as needed
+                                  child: buildAddClassButton(), // Render "Add Class" button
+                                ),
+                              ],
+                            );
+                          }
 
-                        // Add the "Add Class" button to the end of the class schedule items
-                        classScheduleItems.add(buildAddClassButton());
+                          // Display your class schedule items here based on the data in snapshot
+                          final classScheduleItems = snapshot.data!.docs.map((doc) {
+                            final data = doc.data() as Map<String, dynamic>;
+                            final documentId = doc.id; // Retrieve the document ID
+                            final backgroundColor = Color(int.parse(data['backgroundColor'], radix: 16)); // Parse the color from the Firestore document
+                            return buildClassScheduleItem(
+                              documentId: documentId, // Pass the document I
+                              subject: data['subjectName'],
+                              subjectCode: data['subjectCode'],
+                              classDate: data['classDate'],
+                              startTime: data['startTime'], // Retrieve the start time
+                              endTime: data['endTime'],
+                              room: data['room'],
+                              teacher: data['teacher'],
+                              backgroundColor: backgroundColor, // Use the retrieved color
+                            );
+                          }).toList();
 
-                        return Container(
-                          height: 150, // Adjust the height as needed
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            children: classScheduleItems,
-                          ),
-                        );
-                      },
+                          // Add the "Add Class" button to the end of the class schedule items
+                          classScheduleItems.add(buildAddClassButton());
+
+                          return Container(
+                            height: 170, // Adjust the height as needed
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: classScheduleItems,
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
 
@@ -327,19 +333,32 @@ class _HomeScreenState extends State<HomeScreen> {
     required String documentId,
     required String subject,
     required String subjectCode,
-    required Timestamp startTime,
-    required Timestamp endTime,
+    required Timestamp? classDate,
+    required Timestamp? startTime,
+    required Timestamp? endTime,
     required String room,
     required String teacher,
     required Color backgroundColor,
   }) {
+    if (classDate == null || startTime == null || endTime == null) {
+      // Handle the case when any of these values is null
+      return SizedBox.shrink();
+    }
+
 
     // Convert Timestamps to DateTime
+    final classdt = classDate.toDate();
     final startTimeDt = startTime.toDate();
     final endTimeDt = endTime.toDate();
 
+    String truncatedTeacher = teacher;
+    if (teacher.length > 20) {
+      truncatedTeacher = teacher.substring(0, 11) + '...';
+    }
+
     return Container(
-      width: 250,
+      width: 250 ,
+
       margin: EdgeInsets.only(right: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
@@ -353,7 +372,7 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 FittedBox(
-                  fit: BoxFit.scaleDown, // Ensure text scales down to fit
+                  fit: BoxFit.fitWidth, // Ensure text scales down to fit
                   child: Text(
                     subject,
                     style: TextStyle(
@@ -377,7 +396,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
+
+                Row(
+                  children: [
+                    Icon(
+                      Icons.access_time_filled,
+                      color: Colors.white,
+                      size: 10,
+                    ),
+                    SizedBox(width: 5),
+                    Text(
+                      'Date: ${DateFormat('MMMM dd, yyyy').format(classdt)}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ],
+                ),
                 Row(
                   children: [
                     Icon(
@@ -469,7 +506,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 FittedBox(
                   fit: BoxFit.scaleDown, // Ensure text scales down to fit
                   child: Text(
-                    teacher,
+                    truncatedTeacher,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 14,
